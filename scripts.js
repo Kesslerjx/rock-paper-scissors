@@ -1,12 +1,36 @@
 
+game();
 
-const playerSelection = "Rock";
-const computerSelection = computerPlay();
-console.log(playRound(playerSelection, computerSelection));
+function game() {
+
+    //Win counter
+    let win = 0;
+
+    //Loop through game 5 times
+    for(let i = 0; i < 5; i++) {
+        let playerSelection = prompt("What do you want to play (rock, paper, or scissors)?");
+
+        const computerSelection = computerPlay();
+
+        const round = playRound(playerSelection, computerSelection);
+
+        console.log(round)
+
+        //Add to counter if they win
+        if (round.includes("win")) {
+            win++;
+        }
+    
+    }
+
+    //Ending message
+    console.log("You won " + win + "/5 times.")
+}
 
 function computerPlay() {
     const choices = ["Rock", "Paper", "Scissors"];
 
+    //Pick a random number to decide what the computer plays
     let random = Math.floor(Math.random() * choices.length);
     console.log("Random number = " + random);
     console.log("Random choice = " +choices[random]);
@@ -16,6 +40,7 @@ function computerPlay() {
 
 function playRound(playerSelection, computerSelection) {
 
+    //Determine the winner. Also looks out for ties and if the user inputs anything other than a valid option
     if (playerSelection.toLowerCase() == computerSelection.toLowerCase()) {
         return "Tie! Try again."
     }else if (playerSelection.toLowerCase() === "rock" && computerSelection.toLowerCase() === "paper") {
