@@ -1,4 +1,5 @@
 
+//Call game function to run
 game();
 
 function game() {
