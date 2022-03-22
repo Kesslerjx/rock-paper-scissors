@@ -1,31 +1,93 @@
 
 //Call game function to run
-game();
+//game();
 
-function game() {
+let userScore = 0;
+let compScore = 0;
 
-    //Win counter
-    let win = 0;
+//Get container
+const container = document.querySelector('#container');
 
-    //Loop through game 5 times
-    for(let i = 0; i < 5; i++) {
-        let playerSelection = prompt("What do you want to play (rock, paper, or scissors)?");
+//Get all buttons
+const buttons = document.querySelectorAll('button');
 
-        const computerSelection = computerPlay();
+//Get results div
+const results = document.querySelector('#results');
 
-        const round = playRound(playerSelection, computerSelection);
+//Get user and comp score paragraph
+const userScoreParagraph = document.querySelector('#user-score');
+const compScoreParagraph = document.querySelector('#comp-score');
 
-        console.log(round)
+//Add event listener to each button
+buttons.forEach( button => button.addEventListener('click', userPlay));
 
-        //Add to counter if they win
-        if (round.includes("win")) {
-            win++;
-        }
-    
+//Runs everytime a user presses a button
+function userPlay(event) {
+
+    const playerSelection = this.textContent; //Get what the user played
+    const computerSelection = computerPlay(); //Have the computer choose an option
+    const result = playRound(playerSelection, computerSelection); //Get the result
+
+    //Create p element for the result and append to results div
+    const p = document.createElement('p');
+    p.textContent = result;
+    results.prepend(p); //Add to the top of the results to show the most recent first
+
+    determinePoints(result);
+
+    determineWinner();
+
+}
+
+
+//Determines who gets a point based on the result
+function determinePoints(result) {
+    if (result.includes('win')) {
+        userScore += 1;
+        userScoreParagraph.textContent = "User Score: " + userScore;
+    } else if (result.includes('lose')) {
+        compScore += 1;
+        compScoreParagraph.textContent = "Comp Score: " + compScore;
     }
+}
 
-    //Ending message
-    console.log("You won " + win + "/5 times.")
+//Determines who the winner is
+function determineWinner() {
+    if (userScore == 5 || compScore == 5) {
+        //Disable buttons
+        buttons.forEach(button => button.disabled = true);
+
+        //Announce the winner
+        if (userScore == 5) {
+            userScoreParagraph.textContent += " Winner!";
+        } else {
+            compScoreParagraph.textContent += " Winner!";
+        }
+
+        //Create button to try again
+        const tryAgain = document.createElement('button');
+        tryAgain.textContent = "Try again";
+        tryAgain.addEventListener('click', function(event) {
+            //Reset scores
+            userScore = 0;
+            compScore = 0;
+            userScoreParagraph.textContent = "User Score: 0";
+            compScoreParagraph.textContent = "Comp Score: 0";
+
+            //Clear results
+            while(results.firstChild){
+                results.lastChild.remove();
+            }
+
+            //Enable buttons
+            buttons.forEach(button => button.disabled = false);
+
+            //Remove self from container
+            container.removeChild(tryAgain);
+        });
+        container.append(tryAgain); //Add to container
+
+    }
 }
 
 function computerPlay() {
